@@ -1,0 +1,7 @@
+*.tfstate
+.tfstate.*
+**.terraform
+**.terraform.lock.*
+**credentials.json
+**.env
+**/taxi_postgres/*
