@@ -3,5 +3,6 @@
 **.terraform
 **.terraform.lock.*
 **credentials.json
+**key.json
 **.env
 **/taxi_postgres/*
