@@ -1,0 +1,51 @@
+--Question 3. Count Records
+
+SELECT COUNT(1)
+FROM green_tripdata
+WHERE lpep_pickup_datetime::text LIKE '%2019-09-18%' 
+	AND lpep_dropoff_datetime::text LIKE '%2019-09-18%';
+
+--Question 4. Largest trip for each day
+
+SELECT 
+	CAST(lpep_pickup_datetime AS DATE) AS "day",
+	SUM(trip_distance) AS sum
+FROM green_tripdata
+WHERE lpep_pickup_datetime::text LIKE '%2019-09-18%'
+	OR lpep_pickup_datetime::text LIKE '%2019-09-16%'
+	OR lpep_pickup_datetime::text LIKE '%2019-09-26%'
+	OR lpep_pickup_datetime::text LIKE '%2019-09-21%'
+GROUP BY "day"
+ORDER BY sum DESC;
+
+-- Question 5. Three biggest pick up Boroughs
+
+SELECT t."Borough" AS "Borough",
+	CAST(g.lpep_pickup_datetime AS DATE) AS "Day",
+	SUM(total_amount) AS "Sum"
+	FROM green_tripdata AS g
+JOIN taxi_zone AS t
+	ON g."PULocationID" = t."LocationID"
+JOIN taxi_zone as tdo
+	ON g."DOLocationID" = tdo."LocationID"
+WHERE g.lpep_pickup_datetime::text LIKE '%2019-09-18%'
+	AND t."Borough" NOT IN ('Unknown')
+GROUP BY "Day", t."Borough"
+ORDER BY "Sum" DESC
+-- LIMIT 3;
+
+--Question 6. Largest tip
+
+SELECT 
+	tpu."Zone" as "Pickup_Zone",
+	tdo."Zone" as "Dropoff_zone",
+	MAX(tip_amount) as Max_tip
+FROM green_tripdata AS g
+JOIN taxi_zone AS tpu
+	ON g."PULocationID" = tpu."LocationID"
+JOIN taxi_zone as tdo
+	ON g."DOLocationID" = tdo."LocationID"
+WHERE g.lpep_pickup_datetime::text LIKE '%2019-09%'
+	AND tpu."Zone" = 'Astoria'
+GROUP BY tpu."Zone", tdo."Zone"
+ORDER BY Max_tip DESC, tpu."Zone", tpu."Zone";
