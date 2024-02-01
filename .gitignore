@@ -6,3 +6,6 @@
 **key.json
 **.env
 **/taxi_postgres/*
+**/mage_data/*
+**/magic-zoomcamp/*
+**/personal_gcp.json/*
