@@ -6,7 +6,8 @@
 **key.json
 **.env
 **/taxi_postgres/*
-**/personal_gcp.json/*
+**/personal_gcp.json
 **/mage_data/*
 **/magic-zoomcamp/*
 */requirement.txt
+
