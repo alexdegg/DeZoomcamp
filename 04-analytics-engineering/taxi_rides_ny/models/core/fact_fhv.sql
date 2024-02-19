@@ -9,22 +9,24 @@ with fhv_tripdata_clean as (
         dispatching_base_num ,
         pickup_datetime,
         dropOff_datetime,
-        round(cast(PUlocationID as numeric), 0) as PUlocationID,
-        round(cast(DOlocationID as numeric), 0) as DOlocationID,
+        PUlocationID,
+        DOlocationID,
         SR_Flag,
-        Affiliated_base_number
+        Affiliated_base_number,
+        'FHV' as service_type
     from {{ ref('stg_fhv_tripdata') }}
-    where PULocationID != 'nan' and DOLocationID != 'nan'
+    where PUlocationID is not null and DOlocationID is not null
 ),
 fhv_tripdata as(
     select
         dispatching_base_num ,
         pickup_datetime,
         dropOff_datetime,
-        cast(PUlocationID as integer) as PUlocationID,
-        cast(DOlocationID as integer) as DOlocationID,
+        PUlocationID,
+        DOlocationID,
         SR_Flag,
-        Affiliated_base_number
+        Affiliated_base_number,
+        service_type
     from fhv_tripdata_clean
 ),
 dim_zones as (
@@ -36,14 +38,15 @@ select fhv_tripdata.dispatching_base_num,
     fhv_tripdata.dropOff_datetime,
     fhv_tripdata.SR_Flag,
     fhv_tripdata.Affiliated_base_number,
-    cast(fhv_tripdata.PUlocationID as integer) as PUlocationID,
+    PUlocationID,
     pickup_zone.borough as pickup_borough, 
     pickup_zone.zone as pickup_zone, 
-    cast(fhv_tripdata.DOlocationID as integer) as DOlocationID,
+    DOlocationID,
     dropoff_zone.borough as dropoff_borough, 
-    dropoff_zone.zone as dropoff_zone
+    dropoff_zone.zone as dropoff_zone,
+    service_type
 from fhv_tripdata
 inner join dim_zones as pickup_zone
-on cast(fhv_tripdata.PUlocationID as integer) = pickup_zone.locationid
+on fhv_tripdata.PUlocationID = pickup_zone.locationid
 inner join dim_zones as dropoff_zone
-on cast(fhv_tripdata.DOlocationID as integer) = dropoff_zone.locationid
+on fhv_tripdata.DOlocationID = dropoff_zone.locationid
