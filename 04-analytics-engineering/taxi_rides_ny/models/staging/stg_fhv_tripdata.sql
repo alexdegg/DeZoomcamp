@@ -6,10 +6,10 @@
 
 select
     cast(dispatching_base_num as string) as dispatching_base_num ,
-    cast(pickup_datetime as TIMESTAMP) as pickup_datetime,
-    cast(dropOff_datetime as TIMESTAMP) as dropOff_datetime,
-    cast(PUlocationID as string) as PUlocationID,
-    cast(DOlocationID AS string) as DOlocationID,
+    pickup_datetime,
+    dropOff_datetime,
+    {{ dbt.safe_cast("PUlocationID", api.Column.translate_type("integer")) }} as PUlocationID,
+    {{ dbt.safe_cast("DOlocationID", api.Column.translate_type("integer")) }} as DOlocationID,
     cast(SR_Flag AS string) as SR_Flag,
     cast(Affiliated_base_number AS string) as Affiliated_base_number
 from {{ source('staging','fhv_trips')}}
