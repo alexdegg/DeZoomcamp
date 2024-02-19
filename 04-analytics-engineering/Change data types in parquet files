@@ -1,0 +1,33 @@
+import pandas as pd
+import pyarrow.parquet as pq
+import os
+
+files = ['path-to-file/fhv_tripdata_2019-01.parquet',
+         'path-to-file/fhv_tripdata_2019-02.parquet',
+         'path-to-file/fhv_tripdata_2019-03.parquet',
+         'path-to-file/fhv_tripdata_2019-04.parquet',
+         'path-to-file/fhv_tripdata_2019-05.parquet',
+         'path-to-file/fhv_tripdata_2019-06.parquet',
+         'path-to-file/fhv_tripdata_2019-07.parquet',
+         'path-to-file/fhv_tripdata_2019-08.parquet',
+         'path-to-file/fhv_tripdata_2019-09.parquet',
+         'path-to-file/fhv_tripdata_2019-10.parquet',
+         'path-to-file/fhv_tripdata_2019-11.parquet',
+         'path-to-file/fhv_tripdata_2019-12.parquet']
+
+for f in files:
+  
+    table = pq.read_table(f)  
+    df = table.to_pandas()
+
+    # Now convert to int 
+    df['dispatching_base_num'] = df['dispatching_base_num'].astype('str')
+    df['pickup_datetime'] = pd.to_datetime(df['pickup_datetime'])
+    df['dropOff_datetime'] = pd.to_datetime(df['dropOff_datetime'])
+    df['PUlocationID'] = pd.to_numeric(df['PUlocationID'], errors='coerce').astype('Int64')
+    df['DOlocationID'] = pd.to_numeric(df['DOlocationID'], errors='coerce').astype('Int64')
+    df['SR_Flag'] = df['SR_Flag'].astype('str')
+    df['Affiliated_base_number'] = df['Affiliated_base_number'].astype('str')
+
+    df.to_parquet(f, index=False)
+    print(f"Converted {f}")
